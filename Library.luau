@@ -1,6 +1,6 @@
 --[[
                           Neverlose.cc UI Library
-    Author: 4lpaca
+    Author: 4lpaca, Modified by FlamesW
 	License: MIT
     Discord: https://arceney.win/discord
     Other-Projects: https://4lpaca.win
