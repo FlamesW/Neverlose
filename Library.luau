@@ -6785,3 +6785,5 @@ function NeverLose:Unload()
 		pcall(v.Disconnect,v)
 	end;
 end;
+
+return Neverlose;
