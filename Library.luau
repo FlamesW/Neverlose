@@ -5770,7 +5770,7 @@ function NeverLose:CreateWindow(Config)
 			table.clear(ConfigList);
 		end;
 
-		task.delay(1,function()
+		task.delay(0.15,function()
 			local Target = "Default";
 			if isfile(ConfigLib.AutoLoadPath) then
 				local saved = readfile(ConfigLib.AutoLoadPath);
