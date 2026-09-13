@@ -136,7 +136,6 @@ Script:Inject(
         NeverLose = NeverLose,
         Window = Window,
         Logging = Logging,
-        NeverKeybind = NeverKeybind,
     },
     ("NeverLose/Assets/Dashboard.luau")
 )
