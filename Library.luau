@@ -4254,13 +4254,13 @@ function NeverLose:CreateWindow(Config)
 		NeverLose.PlayAnimate(UserSettingButton,SlowyTween , {
 			TextTransparency = 0.25
 		})		
-	end)))
+	end))
 
 	NeverLose:AddSignal(BottomFrame.MouseLeave:Connect(function()
 		NeverLose.PlayAnimate(UserSettingButton,SlowyTween , {
 			TextTransparency = 0.5
 		})		
-	end)))
+	end))
 
 	RightMenuFrame.Name = NeverLose.RandomString();
 	RightMenuFrame.Parent = WindowFrame
@@ -5928,7 +5928,7 @@ function NeverLose:CreateWindow(Config)
 				end
 			end
 		end);
-	end))
+	end)
 
 	Window.UserSettings = UserSettings;
 
@@ -5974,7 +5974,7 @@ function NeverLose:CreateWindow(Config)
 				Window:ToggleInterface()
 			end
 		end;
-	end)));
+	end));
 
 	function Window:ToggleInterface()
 		Window.Signal:SetValue(not Window.Signal:GetValue());
@@ -6376,7 +6376,7 @@ function NeverLose:CreateNotification()
 			task.wait(0.125);
 
 			ContainerFrame:Destroy();
-		end))
+		end)
 	end;
 
 	return Notifier;
@@ -6384,7 +6384,7 @@ end;
 
 function NeverLose:CreateLogger()
 	if NeverLose.__LogSystem then
-		return 	NeverLose.__LogSystem;
+		return NeverLose.__LogSystem;
 	end;
 
 	local Logging = {};
@@ -6777,5 +6777,3 @@ function NeverLose:Unload()
 		pcall(v.Disconnect,v)
 	end;
 end;
-
-return NeverLose;
