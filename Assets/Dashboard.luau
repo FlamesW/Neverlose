@@ -257,9 +257,6 @@ Movement:AddLabel("TP Tool"):AddToggle({
 
                 local HitInst = Ray.Instance
                 if HitInst then
-                    if not HitInst.CanCollide then
-                        return Logging.new("triangle-exclamation", "Clicked non-solid surface", 2.5)
-                    end
                     if HitInst:IsA("BasePart") and HitInst.Transparency >= 1 and HitInst.CanCollide == false then
                         return Logging.new("triangle-exclamation", "Clicked invisible part", 2.5)
                     end
