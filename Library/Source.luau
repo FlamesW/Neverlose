@@ -3549,6 +3549,16 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 			Icon.Text = t
 		end;
 
+		local ButtonHandler = NeverLose:RegisiterHandler(ButtonFrame , Signel);
+
+		Button.AddOption = ButtonHandler.AddOption;
+		Button.AddToggle = ButtonHandler.AddToggle;
+		Button.AddSlider = ButtonHandler.AddSlider;
+		Button.AddDropdown = ButtonHandler.AddDropdown;
+		Button.AddColorPicker = ButtonHandler.AddColorPicker;
+		Button.AddKeybind = ButtonHandler.AddKeybind;
+		Button.AddTextInput = ButtonHandler.AddTextInput;
+
 		local bth = NeverLose:CreateInput(ButtonFrame , function()
 			Config.Callback();
 		end);
