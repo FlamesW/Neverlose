@@ -10,7 +10,7 @@ local os_clock, loadstring, tostring, warn = os.clock, loadstring, tostring, war
 
 -- // @Files
 local Files = {
-    ["Murder Mystery 2"] = { File = "MM2/File.luau", Universe = 666 },
+    ["Murder Mystery 2"] = { File = "MM2/File.luau", Universe = 66654135 },
     ["Random Game"] = { File = "Random/File.luau", Universe = 9271746647 },
 }
 local Repo, Point = ("https://raw.githubusercontent.com/FlamesW/Neverlose/home/Games/"), (Game.GameId)
