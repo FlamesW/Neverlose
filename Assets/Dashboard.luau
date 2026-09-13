@@ -179,7 +179,7 @@ Gravity_Label:AddToggle({
 })
 
 Gravity_Label:AddOption():AddLabel("Gravity"):AddSlider({
-    Default = 196,
+    Default = 196.2,
     Min = 0,
     Max = 500,
     Rounding = 1,
