@@ -3541,6 +3541,35 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		Icon.TextTransparency = 0.250
 		Icon.TextWrapped = true
 
+		local BasedHandler = Instance.new("Frame")
+		local OptionsLayout = Instance.new("UIListLayout")
+
+		BasedHandler.Name = NeverLose.RandomString()
+		BasedHandler.Parent = ButtonFrame
+		BasedHandler.AnchorPoint = Vector2.new(1, 0.5)
+		BasedHandler.BackgroundTransparency = 1
+		BasedHandler.BorderSizePixel = 0
+		BasedHandler.Position = UDim2.new(1, -30, 0.5, 0)
+		BasedHandler.Size = UDim2.new(0, 60, 0, 25)
+		BasedHandler.ZIndex = LayerIndex + 12
+
+		OptionsLayout.Parent = BasedHandler
+		OptionsLayout.FillDirection = Enum.FillDirection.Horizontal
+		OptionsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+		OptionsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		OptionsLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+		OptionsLayout.Padding = UDim.new(0, 5)
+
+		local ButtonHandler = NeverLose:RegisiterHandler(BasedHandler, Signel)
+
+		Button.AddOption = ButtonHandler.AddOption
+		Button.AddToggle = ButtonHandler.AddToggle
+		Button.AddSlider = ButtonHandler.AddSlider
+		Button.AddDropdown = ButtonHandler.AddDropdown
+		Button.AddColorPicker = ButtonHandler.AddColorPicker
+		Button.AddKeybind = ButtonHandler.AddKeybind
+		Button.AddTextInput = ButtonHandler.AddTextInput
+
 		function Button:SetText(t)
 			BasedLabel.Text = t;
 		end;
@@ -3548,16 +3577,6 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		function Button:SetIcon(t)
 			Icon.Text = t
 		end;
-
-		local ButtonHandler = NeverLose:RegisiterHandler(ButtonFrame , Signel);
-
-		Button.AddOption = ButtonHandler.AddOption;
-		Button.AddToggle = ButtonHandler.AddToggle;
-		Button.AddSlider = ButtonHandler.AddSlider;
-		Button.AddDropdown = ButtonHandler.AddDropdown;
-		Button.AddColorPicker = ButtonHandler.AddColorPicker;
-		Button.AddKeybind = ButtonHandler.AddKeybind;
-		Button.AddTextInput = ButtonHandler.AddTextInput;
 
 		local bth = NeverLose:CreateInput(ButtonFrame , function()
 			Config.Callback();
