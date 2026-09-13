@@ -1,6 +1,6 @@
 --[[
     Neverlose.cc UI Library
-    Author: 4lpaca, *Modified by FlamesW
+    Author: 4lpaca, Modified by FlamesW
 ]]
 
 local cloneref: (Instance) -> Instance = (cloneref or clonereference or function(instance: Instance)
