@@ -1,1 +1,1 @@
-print("okk");
+print("nicee");
