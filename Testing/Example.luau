@@ -237,6 +237,7 @@ function Create_Interface()
 
             Script:SetCameraOcclusion("Zoom")
             Script:ThirdPerson(false)
+            Script:SetGravity(196.2)
             Script:SetFOV(70)
             Script:Unload()
 
