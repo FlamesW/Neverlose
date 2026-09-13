@@ -1,6 +1,6 @@
 --[[
     Neverlose.cc UI Library
-    Author: 4lpaca, Modified by FlamesW
+    Author: 4lpaca, *Modified by FlamesW
 ]]
 
 cloneref = cloneref or function(i) return i end;
