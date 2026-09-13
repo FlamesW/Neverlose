@@ -3,10 +3,12 @@
     Author: 4lpaca, *Modified by FlamesW
 ]]
 
-cloneref = cloneref or function(i) return i end;
+local cloneref: (Instance) -> Instance = (cloneref or clonereference or function(instance: Instance)
+    return instance
+end);
+
 gethui = gethui or get_hidden_gui;
 getcustomasset = getcustomasset or getsynasset;
-getgenv = getgenv or getfenv;
 
 local NeverLose = {};
 
