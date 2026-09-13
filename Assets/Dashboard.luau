@@ -182,7 +182,7 @@ Gravity_Label:AddOption():AddLabel("Gravity"):AddSlider({
     Default = 196,
     Min = 0,
     Max = 500,
-    Rounding = 0,
+    Rounding = 1,
     Size = 120,
     Flag = "Movement_Gravity_Value",
     Callback = function(Value)
