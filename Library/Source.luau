@@ -3549,7 +3549,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		BasedHandler.AnchorPoint = Vector2.new(1, 0.5)
 		BasedHandler.BackgroundTransparency = 1
 		BasedHandler.BorderSizePixel = 0
-		BasedHandler.Position = UDim2.new(1, -30, 0.5, 0)
+		BasedHandler.Position = UDim2.new(1, -8, 0.5, 0)
 		BasedHandler.Size = UDim2.new(0, 60, 0, 25)
 		BasedHandler.ZIndex = LayerIndex + 12
 
