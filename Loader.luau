@@ -19,19 +19,20 @@ local function Log(...)
     warn("[NeverLose]:", ...)
 end
 
-local function Create_File(Path)
+local function Create_Folder(Path)
     if is_folder(Path) then return end
 
     local Segments = {}
     for Part in string_gmatch(Path, "[^/]+") do
         table_insert(Segments, Part)
-        local Sub = table_concat(Segments, "/")
-        if not is_folder(Sub) then
-            make_folder(Sub)
-        end
+    end
+
+    for i = 1, #Segments do
+        local Sub = table_concat(Segments, "/", 1, i)
+        if not is_folder(Sub) then make_folder(Sub) end
     end
 end
-Create_File("NeverLose/Assets/Caches")
+Create_Folder("NeverLose/Assets/Caches")
 
 -- // @Shift
 local Key = 21
