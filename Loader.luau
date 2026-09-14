@@ -1,4 +1,4 @@
--- // @Neverlose Loader
+-- // @Neverlose
 local Game: DataModel = game;
 if not (Game:IsLoaded()) then Game.Loaded:Wait() end
 
