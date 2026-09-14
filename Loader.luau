@@ -115,7 +115,7 @@ if is_folder("NeverLose") then
     return
 end
 
-local Neverlose_Loader = (function()
+local Neverlose_Downloader = (function()
     local cloneref: (Instance) -> Instance = (cloneref or clonereference or function(instance: Instance)
         return instance
     end)
@@ -223,7 +223,7 @@ local Neverlose_Loader = (function()
     Title.Position = UDim2.fromOffset(46, 13)
     Title.Size = UDim2.new(1, -60, 0, 22)
     Title.Font = Enum.Font.GothamBold
-    Title.Text = "Neverlose Loader"
+    Title.Text = "Neverlose Downloader"
     Title.TextColor3 = Text_Color
     Title.TextSize = 16
     Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -417,7 +417,7 @@ local Neverlose_Loader = (function()
     return Loader
 end)()
 
-Neverlose_Loader:Run({
+Neverlose_Downloader:Run({
     {
         Label = "Initializing...",
         Time = 0.35,
