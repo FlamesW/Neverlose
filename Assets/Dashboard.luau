@@ -14,7 +14,7 @@ local Info = {
             },
         },
     },
-    Build = "@1.02",
+    Build = "@1.01",
 }
 
 Window:AddTabLabel('Main')
@@ -1010,7 +1010,7 @@ Script.AutoLabels = {}
 
 do
     local Interface_Scale = { Small = 20, Mobile = 30, Default = 32, Large = 45 }
-    local PROTECT_OPEN, PROTECT_CLOSE  = "\1", "\2"
+    local PROTECT_OPEN, PROTECT_CLOSE = "\1", "\2"
 
     local function GetMaxLen()
         local ScaleFlag = NeverLose.Flags and NeverLose.Flags["Menu_Scale"]
@@ -1218,7 +1218,7 @@ local function Update_Commit()
 
     if not FirstRun and Changed and Notify_Updates then
         Notification.new({
-            Title   = "New Commit",
+            Title = "New Commit",
             Content = "#" .. Commit.Sha,
             Duration = 12,
         })
@@ -1234,12 +1234,12 @@ Commit_Section:AddLabel("Notify Updates"):AddToggle({
     end,
 })
 
-task.delay(1, function()
+task.delay(3, function()
     local Previous_Build = Script:LoadData(Version_File)
-    local Current_Build  = Info.Build
+    local Current_Build = Info.Build
 
     local Is_First_Run = (Previous_Build == nil)
-    local Did_Change   = (not Is_First_Run) and (Previous_Build ~= Current_Build)
+    local Did_Change = (not Is_First_Run) and (Previous_Build ~= Current_Build)
 
     if Did_Change and Notify_Updates then
         Notification.new({
