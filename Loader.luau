@@ -6,12 +6,15 @@ local write_file, read_file, is_file, is_folder, make_folder = writefile, readfi
 
 local table_insert, table_concat = table.insert, table.concat
 local string_gmatch, string_char, string_byte = string.gmatch, string.char, string.byte
-local os_clock, loadstring, tostring, warn = os.clock, loadstring, tostring, warn
+local os_clock, os_time, loadstring, tostring, warn = os.clock, os.time, loadstring, tostring, warn
+
+-- // @Services
+local Teleport_Service = Game:GetService("TeleportService")
 
 -- // @Files
 local Files = {
-    ["Murder Mystery 2"] = { File = "MM2/File.luau", Universe = 66654135 },
-    ["Random Game"] = { File = "Random/File.luau", Universe = 9271746647 },
+    ["Murder Mystery 2"] = { File = "MM2/File.luau", Universe = 66654135, UUID = 142823291 },
+    ["Random Game"] = { File = "Random/File.luau", Universe = 9271746647, UUID = 123974602339071 },
 }
 local Repo, Point = ("https://raw.githubusercontent.com/FlamesW/Neverlose/home/Games/"), (Game.GameId)
 
@@ -95,11 +98,433 @@ local function From_GameToFile()
     return nil, nil
 end
 
+-- // @Setup
+local cloneref: (Instance) -> Instance = (cloneref or clonereference or function(instance: Instance)
+    return instance
+end)
+
+local Tween_Service = cloneref(Game:GetService("TweenService"))
+local CoreGui = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or Game:FindFirstChild("CoreGui")
+local Protect_Gui = protect_gui or protectgui or (syn and syn.protect_gui) or function(s) return s end
+
+local Main_Color = Color3.fromRGB(8, 8, 13)
+local Stroke_Color = Color3.fromRGB(45, 48, 58)
+local Text_Color = Color3.fromRGB(255, 255, 255)
+local Muted_Color = Color3.fromRGB(186, 186, 186)
+local Accent_Color = Color3.fromRGB(78, 127, 252)
+
+local function Play(Instance, Info, Props)
+    local Tween = Tween_Service:Create(Instance, Info, Props)
+    Tween:Play()
+    return Tween
+end
+
+local function Random_Name()
+    return string.format("LA_%d_%d", math.random(1e6), math.random(1e6))
+end
+
+local function Make_Shadow(Parent)
+    local Layers = {}
+    for _, cfg in ipairs({
+        { Thickness = 6, Transparency = 0.94 },
+        { Thickness = 5, Transparency = 0.93 },
+        { Thickness = 4, Transparency = 0.92 },
+        { Thickness = 3, Transparency = 0.91 },
+    }) do
+        local S = Instance.new("UIStroke")
+        S.Thickness = cfg.Thickness
+        S.Transparency = 1
+        S.Color = Color3.new(0, 0, 0)
+        S.Parent = Parent
+        table_insert(Layers, S)
+    end
+
+    return {
+        Render = function(_, On)
+            for _, S in ipairs(Layers) do
+                Play(S, TweenInfo.new(0.175), {
+                    Transparency = On and (1 - (S.Thickness / 40)) or 1,
+                })
+            end
+        end,
+    }
+end
+
 -- // @Main Loader
 local Supported, Game_Info = From_GameToFile()
 
 if not Supported then
     Log("Unsupported Game")
+
+    local Success_Color = Color3.fromRGB(76, 175, 80)
+    local Danger_Color = Color3.fromRGB(220, 53, 69)
+
+    local Do_Not_Disturb = "NeverLose/Assets/Policy"
+
+    if is_file(Do_Not_Disturb) then
+        local Success, Data = pcall(read_file, Do_Not_Disturb)
+        if Success and Data then
+            local Times_tamp = tonumber(Data)
+            if Times_tamp and (os_time() - Times_tamp) < 3600 then
+                return
+            end
+        end
+    end
+
+    local Game_List = {}
+    for Display_Name, Info in pairs(Files) do
+        table_insert(Game_List, {
+            Name = Display_Name,
+            Universe = Info.Universe,
+            UUID = Info.UUID,
+        })
+    end
+
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = Random_Name()
+    ScreenGui.IgnoreGuiInset = true
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    ScreenGui.DisplayOrder = 9999
+
+    Protect_Gui(ScreenGui)
+    ScreenGui.Parent = CoreGui
+
+    local Row_Height = 62
+    local Row_Spacing = 8
+    local Padding = 18
+    local Header_Height = 78
+    local Footer_Height = 34
+    local Row_Count = #Game_List
+    local Root_Height = Header_Height + (Row_Height * Row_Count) + (Row_Spacing * (Row_Count - 1)) + Footer_Height
+
+    local Root = Instance.new("Frame")
+    local Root_Corner = Instance.new("UICorner")
+    local Root_Stroke = Instance.new("UIStroke")
+
+    Root.Name = Random_Name()
+    Root.Parent = ScreenGui
+    Root.AnchorPoint = Vector2.new(0.5, 0.5)
+    Root.BackgroundColor3 = Main_Color
+    Root.BackgroundTransparency = 1
+    Root.BorderSizePixel = 0
+    Root.Position = UDim2.fromScale(0.5, 0.5)
+    Root.Size = UDim2.fromOffset(360, Root_Height)
+    Root.ZIndex = 999
+    Root.ClipsDescendants = true
+
+    Root_Corner.CornerRadius = UDim.new(0, 12)
+    Root_Corner.Parent = Root
+
+    Root_Stroke.Transparency = 1
+    Root_Stroke.Color = Stroke_Color
+    Root_Stroke.Parent = Root
+
+    local Shadow = Make_Shadow(Root)
+    Shadow:Render(true)
+
+    local Header_Dot = Instance.new("Frame")
+    local Header_Dot_Corner = Instance.new("UICorner")
+
+    Header_Dot.Name = Random_Name()
+    Header_Dot.Parent = Root
+    Header_Dot.AnchorPoint = Vector2.new(1, 0)
+    Header_Dot.BackgroundColor3 = Accent_Color
+    Header_Dot.BorderSizePixel = 0
+    Header_Dot.Position = UDim2.new(1, -Padding, 0, 24)
+    Header_Dot.Size = UDim2.fromOffset(6, 6)
+    Header_Dot.ZIndex = 1000
+
+    Header_Dot_Corner.CornerRadius = UDim.new(1, 0)
+    Header_Dot_Corner.Parent = Header_Dot
+
+    local Dot_Thread = task.spawn(function()
+        while Root.Parent do
+            Play(Header_Dot, TweenInfo.new(0.6, Enum.EasingStyle.Quad), { BackgroundTransparency = 0.7 })
+            task.wait(0.6)
+            Play(Header_Dot, TweenInfo.new(0.6, Enum.EasingStyle.Quad), { BackgroundTransparency = 0 })
+            task.wait(0.6)
+        end
+    end)
+
+    local Title_Icon = Instance.new("TextLabel")
+    Title_Icon.Name = Random_Name()
+    Title_Icon.Parent = Root
+    Title_Icon.BackgroundTransparency = 1
+    Title_Icon.Position = UDim2.fromOffset(Padding, 16)
+    Title_Icon.Size = UDim2.fromOffset(20, 20)
+    Title_Icon.Font = Enum.Font.GothamBold
+    Title_Icon.Text = "❖"
+    Title_Icon.TextColor3 = Accent_Color
+    Title_Icon.TextSize = 21
+    Title_Icon.TextTransparency = 0.05
+    Title_Icon.ZIndex = 1000
+
+    local Title = Instance.new("TextLabel")
+    Title.Name = Random_Name()
+    Title.Parent = Root
+    Title.BackgroundTransparency = 1
+    Title.Position = UDim2.fromOffset(Padding + 26, 14)
+    Title.Size = UDim2.new(1, -(Padding * 2) - 26, 0, 22)
+    Title.Font = Enum.Font.GothamBold
+    Title.Text = "Supported Games"
+    Title.TextColor3 = Text_Color
+    Title.TextSize = 16
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.ZIndex = 1000
+
+    local Subtitle = Instance.new("TextLabel")
+    Subtitle.Name = Random_Name()
+    Subtitle.Parent = Root
+    Subtitle.BackgroundTransparency = 1
+    Subtitle.Position = UDim2.fromOffset(Padding, 42)
+    Subtitle.Size = UDim2.new(1, -(Padding * 2), 0, 16)
+    Subtitle.Font = Enum.Font.GothamMedium
+    Subtitle.Text = "This game isn't supported yet, try one of these games:"
+    Subtitle.TextColor3 = Muted_Color
+    Subtitle.TextSize = 12
+    Subtitle.TextTransparency = 0.35
+    Subtitle.TextXAlignment = Enum.TextXAlignment.Left
+    Subtitle.ZIndex = 1000
+
+    local Rows = {}
+    local Row_Height_Inner = 46
+
+    for Index, Entry in ipairs(Game_List) do
+        local Row = Instance.new("Frame")
+        local Row_Corner = Instance.new("UICorner")
+
+        Row.Name = Random_Name()
+        Row.Parent = Root
+        Row.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+        Row.BackgroundTransparency = 1
+        Row.BorderSizePixel = 0
+        Row.Position = UDim2.fromOffset(Padding, Header_Height + ((Index - 1) * (Row_Height + Row_Spacing)))
+        Row.Size = UDim2.new(1, -(Padding * 2), 0, Row_Height)
+        Row.ZIndex = 1000
+
+        Row_Corner.CornerRadius = UDim.new(0, 10)
+        Row_Corner.Parent = Row
+
+        local Thumb_Frame = Instance.new("Frame")
+        local Thumb_Corner = Instance.new("UICorner")
+        local Thumb_Image = Instance.new("ImageLabel")
+        local Thumb_Image_Corner = Instance.new("UICorner")
+
+        Thumb_Frame.Name = Random_Name()
+        Thumb_Frame.Parent = Row
+        Thumb_Frame.AnchorPoint = Vector2.new(0, 0.5)
+        Thumb_Frame.BackgroundColor3 = Color3.fromRGB(30, 29, 36)
+        Thumb_Frame.BorderSizePixel = 0
+        Thumb_Frame.Position = UDim2.new(0, 10, 0.5, 0)
+        Thumb_Frame.Size = UDim2.fromOffset(Row_Height_Inner, Row_Height_Inner)
+        Thumb_Frame.ZIndex = 1001
+
+        Thumb_Corner.CornerRadius = UDim.new(0, 8)
+        Thumb_Corner.Parent = Thumb_Frame
+
+        Thumb_Image.Name = Random_Name()
+        Thumb_Image.Parent = Thumb_Frame
+        Thumb_Image.BackgroundTransparency = 1
+        Thumb_Image.Size = UDim2.fromScale(1, 1)
+        Thumb_Image.Image = "rbxthumb://type=GameIcon&id=" .. tostring(Entry.Universe) .. "&w=150&h=150"
+        Thumb_Image.ScaleType = Enum.ScaleType.Crop
+        Thumb_Image.ZIndex = 1002
+
+        Thumb_Image_Corner.CornerRadius = UDim.new(0, 8)
+        Thumb_Image_Corner.Parent = Thumb_Image
+
+        local Name_Label = Instance.new("TextLabel")
+        Name_Label.Name = Random_Name()
+        Name_Label.Parent = Row
+        Name_Label.BackgroundTransparency = 1
+        Name_Label.Position = UDim2.new(0, Row_Height_Inner + 22, 0, 10)
+        Name_Label.Size = UDim2.new(1, -(Row_Height_Inner + 70), 0, 20)
+        Name_Label.Font = Enum.Font.GothamBold
+        Name_Label.Text = Entry.Name
+        Name_Label.TextColor3 = Text_Color
+        Name_Label.TextSize = 14
+        Name_Label.TextXAlignment = Enum.TextXAlignment.Left
+        Name_Label.TextTruncate = Enum.TextTruncate.AtEnd
+        Name_Label.ZIndex = 1001
+
+        local UUID_Label = Instance.new("TextLabel")
+        UUID_Label.Name = Random_Name()
+        UUID_Label.Parent = Row
+        UUID_Label.BackgroundTransparency = 1
+        UUID_Label.Position = UDim2.new(0, Row_Height_Inner + 22, 0, 30)
+        UUID_Label.Size = UDim2.new(1, -(Row_Height_Inner + 70), 0, 16)
+        UUID_Label.Font = Enum.Font.Gotham
+        UUID_Label.Text = "UUID: " .. tostring(Entry.UUID)
+        UUID_Label.TextColor3 = Muted_Color
+        UUID_Label.TextSize = 11
+        UUID_Label.TextTransparency = 0.4
+        UUID_Label.TextXAlignment = Enum.TextXAlignment.Left
+        UUID_Label.ZIndex = 1001
+
+        local TP_Button = Instance.new("TextButton")
+        local TP_Button_Corner = Instance.new("UICorner")
+
+        TP_Button.Name = Random_Name()
+        TP_Button.Parent = Row
+        TP_Button.AnchorPoint = Vector2.new(1, 0.5)
+        TP_Button.BackgroundColor3 = Success_Color
+        TP_Button.BackgroundTransparency = 0
+        TP_Button.BorderSizePixel = 0
+        TP_Button.Position = UDim2.new(1, -12, 0.5, 0)
+        TP_Button.Size = UDim2.fromOffset(58, 22)
+        TP_Button.Font = Enum.Font.GothamBold
+        TP_Button.Text = "Teleport"
+        TP_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TP_Button.TextSize = 11
+        TP_Button.AutoButtonColor = false
+        TP_Button.ZIndex = 1002
+
+        TP_Button_Corner.CornerRadius = UDim.new(0, 6)
+        TP_Button_Corner.Parent = TP_Button
+
+        TP_Button.MouseEnter:Connect(function()
+            Play(TP_Button, TweenInfo.new(0.15), {
+                BackgroundColor3 = Color3.fromRGB(96, 200, 104),
+            })
+        end)
+
+        TP_Button.MouseLeave:Connect(function()
+            Play(TP_Button, TweenInfo.new(0.15), {
+                BackgroundColor3 = Success_Color,
+            })
+        end)
+
+        TP_Button.MouseButton1Click:Connect(function()
+            Close()
+            Teleport_Service:Teleport(Entry.UUID, Game.Players.LocalPlayer)
+        end)
+
+        table_insert(Rows, {
+            Frame = Row,
+            Name_Label = Name_Label,
+            Entry = Entry,
+        })
+    end
+
+    local PushAway_Button = Instance.new("TextButton")
+    local PushAway_Button_Corner = Instance.new("UICorner")
+
+    PushAway_Button.Name = Random_Name()
+    PushAway_Button.Parent = Root
+    PushAway_Button.AnchorPoint = Vector2.new(1, 1)
+    PushAway_Button.BackgroundColor3 = Danger_Color
+    PushAway_Button.BackgroundTransparency = 1
+    PushAway_Button.BorderSizePixel = 0
+    PushAway_Button.Position = UDim2.new(1, -Padding, 1, -8)
+    PushAway_Button.Size = UDim2.fromOffset(110, 20)
+    PushAway_Button.Font = Enum.Font.GothamBold
+    PushAway_Button.Text = "Do not disturb"
+    PushAway_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    PushAway_Button.TextSize = 11
+    PushAway_Button.AutoButtonColor = false
+    PushAway_Button.ZIndex = 1002
+
+    PushAway_Button_Corner.CornerRadius = UDim.new(0, 6)
+    PushAway_Button_Corner.Parent = PushAway_Button
+
+    PushAway_Button.MouseEnter:Connect(function()
+        Play(PushAway_Button, TweenInfo.new(0.15), {
+            BackgroundColor3 = Color3.fromRGB(240, 70, 85),
+            BackgroundTransparency = 0,
+        })
+    end)
+
+    PushAway_Button.MouseLeave:Connect(function()
+        Play(PushAway_Button, TweenInfo.new(0.15), {
+            BackgroundColor3 = Danger_Color,
+            BackgroundTransparency = 0.1,
+        })
+    end)
+
+    PushAway_Button.MouseButton1Click:Connect(function()
+        Create_Folder("NeverLose")
+        write_file(Do_Not_Disturb, tostring(os_time()))
+
+        Close()
+    end)
+
+    local Footer = Instance.new("TextLabel")
+    Footer.Name = Random_Name()
+    Footer.Parent = Root
+    Footer.BackgroundTransparency = 1
+    Footer.Position = UDim2.new(0, Padding, 1, -Footer_Height + 6)
+    Footer.Size = UDim2.new(1, -(Padding * 2 + 120), 0, 18)
+    Footer.Font = Enum.Font.GothamMedium
+    Footer.Text = "NeverLose · One Step Ahead. Always~"
+    Footer.TextColor3 = Muted_Color
+    Footer.TextSize = 11
+    Footer.TextTransparency = 0.5
+    Footer.TextXAlignment = Enum.TextXAlignment.Left
+    Footer.ZIndex = 1000
+
+    Close = function()
+        local Fade = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+        for _, Obj in ipairs({ Title_Icon, Title, Subtitle, Footer, Header_Dot, PushAway_Button }) do
+            if Obj:IsA("TextLabel") then
+                Play(Obj, Fade, { TextTransparency = 1 })
+            elseif Obj:IsA("TextButton") then
+                Play(Obj, Fade, {
+                    BackgroundTransparency = 1,
+                    TextTransparency = 1,
+                })
+            else
+                Play(Obj, Fade, { BackgroundTransparency = 1 })
+            end
+        end
+
+        for _, Row in ipairs(Rows) do
+            Play(Row.Frame, Fade, { BackgroundTransparency = 1 })
+        end
+
+        task.wait(0.22)
+
+        local Collapse = TweenInfo.new(0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+
+        Play(Root, Collapse, {
+            Size = UDim2.fromOffset(300, 0),
+            BackgroundTransparency = 1,
+        })
+
+        Play(Root_Stroke, Collapse, { Transparency = 1 })
+
+        Shadow:Render(false)
+
+        task.delay(0.3, function()
+            if ScreenGui then
+                ScreenGui:Destroy()
+            end
+        end)
+    end
+
+    task.wait(0.05)
+
+    Play(Root, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        BackgroundTransparency = 0.055,
+    })
+    Play(Root_Stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Transparency = 0.650,
+    })
+    for _, Row in ipairs(Rows) do
+        Play(Row.Frame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundTransparency = 0.4,
+        })
+    end
+    Play(PushAway_Button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        BackgroundTransparency = 0.1,
+    })
+
+    task.delay(15, function()
+        if not ScreenGui or not ScreenGui.Parent then return end
+        Close()
+    end)
+
     return
 end
 
@@ -110,37 +535,13 @@ local function Load_Script()
     Load_Game(File, Cache, Supported)
 end
 
-if is_folder("NeverLose") then
+if is_folder("NeverLose/Games") then
     Load_Script()
     return
 end
 
 local Neverlose_Downloader = (function()
-    local cloneref: (Instance) -> Instance = (cloneref or clonereference or function(instance: Instance)
-        return instance
-    end)
-
-    local Tween_Service = cloneref(Game:GetService("TweenService"))
-
-    local CoreGui = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or Game:FindFirstChild("CoreGui")
-    local Protect_Gui = protect_gui or protectgui or (syn and syn.protect_gui) or function(s) return s end
-
-    local Main_Color = Color3.fromRGB(8, 8, 13)
-    local Stroke_Color = Color3.fromRGB(45, 48, 58)
     local Track_Color = Color3.fromRGB(30, 29, 36)
-    local Text_Color = Color3.fromRGB(255, 255, 255)
-    local Muted_Color = Color3.fromRGB(186, 186, 186)
-    local Accent_Color = Color3.fromRGB(78, 127, 252)
-
-    local function Play(Instance, Info, Props)
-        local Tween = Tween_Service:Create(Instance, Info, Props)
-        Tween:Play()
-        return Tween
-    end
-
-    local function Random_Name()
-        return string.format("LA_%d_%d", math.random(1e6), math.random(1e6))
-    end
 
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = Random_Name()
@@ -173,33 +574,6 @@ local Neverlose_Downloader = (function()
     Root_Stroke.Color = Stroke_Color
     Root_Stroke.Parent = Root
 
-    local function Make_Shadow(Parent)
-        local Layers = {}
-        for _, cfg in ipairs({
-            { Thickness = 6, Transparency = 0.94 },
-            { Thickness = 5, Transparency = 0.93 },
-            { Thickness = 4, Transparency = 0.92 },
-            { Thickness = 3, Transparency = 0.91 },
-        }) do
-            local S = Instance.new("UIStroke")
-            S.Thickness = cfg.Thickness
-            S.Transparency = 1
-            S.Color = Color3.new(0, 0, 0)
-            S.Parent = Parent
-            table_insert(Layers, S)
-        end
-
-        return {
-            Render = function(_, On)
-                for _, S in ipairs(Layers) do
-                    Play(S, TweenInfo.new(0.175), {
-                        Transparency = On and (1 - (S.Thickness / 40)) or 1,
-                    })
-                end
-            end,
-        }
-    end
-
     local Shadow = Make_Shadow(Root)
     Shadow:Render(true)
 
@@ -212,7 +586,7 @@ local Neverlose_Downloader = (function()
     Title_Icon.Font = Enum.Font.GothamBold
     Title_Icon.Text = "⬇"
     Title_Icon.TextColor3 = Accent_Color
-    Title_Icon.TextSize = 18
+    Title_Icon.TextSize = 21
     Title_Icon.TextTransparency = 0.05
     Title_Icon.ZIndex = 1000
 
