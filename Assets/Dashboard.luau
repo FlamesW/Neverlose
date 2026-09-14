@@ -14,7 +14,7 @@ local Info = {
             },
         },
     },
-    Build = "@1.01",
+    Build = "@1.02",
 }
 
 Window:AddTabLabel('Main')
