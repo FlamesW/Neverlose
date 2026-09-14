@@ -1,4 +1,22 @@
 -- // @Dashboard
+local Info = {
+    SupportedGames = {
+        { Game = "Murder Mystery2", Date = "Soon" },
+        { Game = "Example Game", Date = "14/09/2026" },
+    },
+
+    Changelogs = {
+        {
+            Title = "Neverlose 1.01",
+            Date = "N/A",
+            Changes = {
+                "- This is the beginning of our journey:)~",
+            },
+        },
+    },
+    Build = "@1.01",
+}
+
 Window:AddTabLabel('Main')
 
 local Dashboard = Window:AddTab({
@@ -9,7 +27,7 @@ local Dashboard = Window:AddTab({
 local Movement = Dashboard:AddSection({ Name = "Movement", Position = "left"  })
 local Vision = Dashboard:AddSection({ Name = "Vision", Position = "right" })
 local Victim = Dashboard:AddSection({ Name = "Victim", Position = "right" })
-local Info = Dashboard:AddSection({ Name = "Statistics", Position = "right" })
+local Statistics = Dashboard:AddSection({ Name = "Statistics", Position = "right" })
 
 Script:FlightConfig({ SpeedMax = 1500, SpeedControls = { Enabled = false } })
 
@@ -257,9 +275,6 @@ Movement:AddLabel("TP Tool"):AddToggle({
 
                 local HitInst = Ray.Instance
                 if HitInst then
-                    if HitInst:IsA("BasePart") and HitInst.Transparency >= 1 and HitInst.CanCollide == false then
-                        return Logging.new("triangle-exclamation", "Clicked invisible part", 2.5)
-                    end
                     local NameLower = string.lower(HitInst.Name)
                     if NameLower:find("void") or NameLower:find("lava") or NameLower:find("kill") then
                         return Logging.new("triangle-exclamation", "Clicked a hazard", 2.5)
@@ -961,12 +976,12 @@ Victim:AddButton({
 })
 
 local Stats_Label = Victim:AddLabel("Speed: 0 MPH\nMoving: false")
-Info:AddLabel("Executor: " .. tostring(Script:GetExecutor()))
+Statistics:AddLabel("Executor: " .. tostring(Script:GetExecutor()))
 
-local L_Health = Info:AddLabel("Health: ...")
-local L_Speed = Info:AddLabel("Speed: ... MPH")
-local L_Time = Info:AddLabel("Local Time: ...")
-local L_Date = Info:AddLabel("Date: ...")
+local L_Health = Statistics:AddLabel("Health: ...")
+local L_Speed = Statistics:AddLabel("Speed: ... MPH")
+local L_Time = Statistics:AddLabel("Local Time: ...")
+local L_Date = Statistics:AddLabel("Date: ...")
 
 Script:WhileLoop(0.1, function(self)
     local MPH, Moving = 0, false
@@ -990,3 +1005,272 @@ Script:WhileLoop(0.1, function(self)
     L_Time:SetText("Local Time: " .. tostring(self:Time("%H:%M:%S")))
     L_Date:SetText("Date: " .. tostring(self:Date("%Y/%m/%d")))
 end, "Info_Statistics")
+
+Script.AutoLabels = {}
+
+do
+    local Interface_Scale = { Small = 20, Mobile = 30, Default = 32, Large = 45 }
+    local PROTECT_OPEN, PROTECT_CLOSE  = "\1", "\2"
+
+    local function GetMaxLen()
+        local ScaleFlag = NeverLose.Flags and NeverLose.Flags["Menu_Scale"]
+        if not ScaleFlag then return Interface_Scale.Default end
+
+        local Scale = ScaleFlag:GetValue() or "Default"
+        return Interface_Scale[Scale] or Interface_Scale.Default
+    end
+
+    local function WrapPlain(Text, MaxLen)
+        if #Text <= MaxLen then return Text end
+
+        local Out, Line = "", ""
+        for Word in Text:gmatch("%S+") do
+            if #Line + #Word + 1 > MaxLen then
+                Out = Out .. Line .. "\n"
+                Line = Word
+            else
+                Line = Line == "" and Word or (Line .. " " .. Word)
+            end
+        end
+        if Line ~= "" then Out = Out .. Line end
+
+        return Out
+    end
+
+    local function Wrap(Text, MaxLen)
+        Text = tostring(Text)
+
+        local Out = {}
+        local Index = 1
+
+        while Index <= #Text do
+            local OpenAt = Text:find(PROTECT_OPEN, Index, true)
+
+            if not OpenAt then
+                local Rest = Text:sub(Index)
+                if #Rest > 0 then
+                    table.insert(Out, WrapPlain(Rest, MaxLen))
+                end
+                break
+            end
+
+            if OpenAt > Index then
+                table.insert(Out, WrapPlain(Text:sub(Index, OpenAt - 1), MaxLen))
+            end
+
+            local CloseAt = Text:find(PROTECT_CLOSE, OpenAt + 1, true)
+            if not CloseAt then
+                table.insert(Out, Text:sub(OpenAt + 1))
+                break
+            end
+
+            table.insert(Out, Text:sub(OpenAt + 1, CloseAt - 1))
+            Index = CloseAt + 1
+        end
+
+        return table.concat(Out)
+    end
+
+    Script.WrapText = Wrap
+    Script.GetMaxLen = GetMaxLen
+    Script.MarkProtected = function(S)
+        return PROTECT_OPEN .. tostring(S) .. PROTECT_CLOSE
+    end
+
+    function Script:AutoLabel(Parent, Text)
+        local Label = Parent:AddLabel(Wrap(Text, GetMaxLen()), true)
+        local OriginalSetText = Label.SetText
+
+        local RawText = tostring(Text)
+
+        Label.SetText = function(self, NewText)
+            if NewText ~= nil then
+                RawText = tostring(NewText)
+            end
+            return OriginalSetText(self, Wrap(RawText, GetMaxLen()))
+        end
+
+        local OriginalGetText = Label.GetText
+        if OriginalGetText then
+            Label.GetText = function(self) return RawText end
+        end
+
+        table.insert(self.AutoLabels, {
+            Handle = Label,
+            GetRaw = function() return RawText end,
+        })
+
+        return Label
+    end
+
+    Script:WhileLoop(0.25, function(self)
+        local MaxLen = GetMaxLen()
+        if self.Auto_MaxLen == MaxLen then return end
+        self.Auto_MaxLen = MaxLen
+
+        for _, Data in ipairs(self.AutoLabels or {}) do
+            Data.Handle:SetText(Data.GetRaw())
+        end
+    end, "Text_Resizer", false)
+end
+
+local Changelogs = Window:AddTab({
+    Icon = "calendar",
+    Name = "Changelogs",
+})
+
+local Games_Section = Changelogs:AddSection({
+    Name = "Supported Games",
+    Position = "right",
+})
+
+for _, Entry in ipairs(Info.SupportedGames) do
+    Script:AutoLabel(Games_Section, Entry.Game .. " · " .. Entry.Date)
+end
+
+for i, Log in ipairs(Info.Changelogs) do
+    local Header = (i == 1) and "Changelogs" or "Older Releases"
+
+    local Version_Section = Changelogs:AddSection({
+        Name = Header,
+        Position = "left",
+    })
+
+    Version_Section:AddButton({
+        Icon = "document-list-heart",
+        Name = Log.Title .. "  ·  " .. Log.Date,
+        Callback = function() end,
+    })
+
+    for _, Change in ipairs(Log.Changes) do
+        Script:AutoLabel(Version_Section, Change)
+    end
+end
+
+local Credits_Section = Changelogs:AddSection({
+    Name = "Credits",
+    Position = "left",
+})
+
+Credits_Section:AddButton({
+    Icon = "flame",
+    Name = "FlamesW · Function Manager",
+    Callback = function()
+        setclipboard("https://github.com/FlamesW/FunctionManager")
+        Logging.new("hammer-code", "Copied framework link", 5)
+    end,
+})
+
+Credits_Section:AddButton({
+    Icon = "code",
+    Name = "4lpaca · UI Library",
+    Callback = function()
+        setclipboard("https://github.com/4lpaca-pin/NeverLose")
+        Logging.new("code", "Copied UI library link", 5)
+    end,
+})
+
+Credits_Section:AddButton({
+    Icon = "binoculars",
+    Name = "mstudio45 · Esp Library",
+    Callback = function()
+        setclipboard("https://github.com/mstudio45/MSESP")
+        Logging.new("binoculars", "Copied ESP link", 5)
+    end,
+})
+
+local Commit_Section = Changelogs:AddSection({
+    Name = "Update Tracker",
+    Position = "right",
+})
+
+Commit_Section:AddButton({
+    Icon = "github",
+    Name = "Lastest Commit",
+    Callback = function() end,
+})
+
+local Version_File = "NeverLose/Assets/Version.cfg"
+local Protect = Script.MarkProtected
+
+local Latest_Commit = Script:AutoLabel(Commit_Section, "Fetching latest commit...")
+local Notify_Updates, Last_Sha = true, nil
+
+local function Update_Commit()
+    local Commit = Script:LogCommit("https://github.com/FlamesW/Neverlose", "home", 1)
+    if not Commit then
+        Latest_Commit:SetText("Failed to fetch commit")
+        return
+    end
+
+    local NL = Protect("\n\n")
+
+    Latest_Commit:SetText(
+        Commit.Message .. NL ..
+        "Author: " .. Commit.Author .. NL ..
+        Protect("SHA: #" .. Commit.Sha .. " · " .. Commit.TimeAgo)
+    )
+
+    local FirstRun = (Last_Sha == nil)
+    local Changed = (Commit.Sha ~= Last_Sha)
+
+    Last_Sha = Commit.Sha
+
+    if not FirstRun and Changed and Notify_Updates then
+        Notification.new({
+            Title   = "New Commit",
+            Content = "#" .. Commit.Sha,
+            Duration = 12,
+        })
+        Logging.new("github", "Commit: " .. tostring(Commit.Message), 12)
+    end
+end
+
+Commit_Section:AddLabel("Notify Updates"):AddToggle({
+    Default = Notify_Updates,
+    Flag = "Notify_Updates",
+    Callback = function(Value)
+        Notify_Updates = Value
+    end,
+})
+
+task.delay(1, function()
+    local Previous_Build = Script:LoadData(Version_File)
+    local Current_Build  = Info.Build
+
+    local Is_First_Run = (Previous_Build == nil)
+    local Did_Change   = (not Is_First_Run) and (Previous_Build ~= Current_Build)
+
+    if Did_Change and Notify_Updates then
+        Notification.new({
+            Title = "NeverLose Updated",
+            Content = "Build " .. Previous_Build .. "  →  " .. Current_Build,
+            Duration = 12,
+        })
+        Logging.new("cube-vertexes", "Build: " .. Current_Build, 12)
+    end
+
+    Script:SaveData(Version_File, Current_Build)
+end)
+
+Script:WhileLoop(15, Update_Commit, "Commit_Refresh_Loop", false)
+
+local Version_Section = Changelogs:AddSection({
+    Name = "Versions",
+    Position = "right",
+})
+
+Version_Section:AddButton({
+    Icon = "verified-mono",
+    Name = "NeverLose · " .. tostring(Info.Build),
+    Callback = function() end,
+})
+
+local Version_Info = Script:Version()
+local Build = (Version_Info and Version_Info.Build) or "Unknown"
+
+Version_Section:AddButton({
+    Icon = "hammer-code",
+    Name = "Framework · " .. tostring(Build),
+    Callback = function() end,
+})
