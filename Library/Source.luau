@@ -3796,7 +3796,7 @@ function NeverLose:CreateWindow(Config)
 		ConfigFolder = Config.ConfigFolder,
 		Signal = NeverLose:CreateSignal(true),
 		Tabs = {},
-		CurrentTab = 1,
+		CurrentTab = 2,
 		Keybind = Config.Keybind,
 		Enable3DRenderer = Config.Enable3DRenderer
 	};
