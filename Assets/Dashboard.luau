@@ -1234,7 +1234,7 @@ Commit_Section:AddLabel("Notify Updates"):AddToggle({
     end,
 })
 
-task.delay(3, function()
+task.delay(2, function()
     local Previous_Build = Script:LoadData(Version_File)
     local Current_Build = Info.Build
 
