@@ -1242,7 +1242,7 @@ task.delay(2, function()
 
     if Did_Change and Notify_Updates then
         Notification.new({
-            Title = "NeverLose Updated",
+            Title = "New Update",
             Content = "Build " .. Previous_Build .. "  →  " .. Current_Build,
             Duration = 12,
         })
