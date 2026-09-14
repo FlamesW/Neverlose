@@ -314,7 +314,6 @@ Movement:AddLabel("TP Tool"):AddToggle({
     end,
 })
 
-
 local HipHeight_Label = Movement:AddLabel("Hip Height")
 
 HipHeight_Label:AddToggle({
