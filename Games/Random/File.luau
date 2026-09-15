@@ -144,6 +144,46 @@ Script:Inject(
 
 
 function Create_Interface()
+    -- // @About
+    Window:AddTabLabel('About')
+
+    local Credits = Window:AddTab({
+        Icon = "heart",
+        Name = "Credits",
+    })
+
+    local Credits_Section = Credits:AddSection({
+        Name = "Credits",
+        Position = "left",
+    })
+
+    Credits_Section:AddButton({
+        Icon = "flame",
+        Name = "FlamesW · Function Manager",
+        Callback = function()
+            setclipboard("https://github.com/FlamesW/FunctionManager")
+            Logging.new("hammer-code", "Copied framework link", 5)
+        end,
+    })
+
+    Credits_Section:AddButton({
+        Icon = "code",
+        Name = "4lpaca · UI Library",
+        Callback = function()
+            setclipboard("https://github.com/4lpaca-pin/NeverLose")
+            Logging.new("code", "Copied UI library link", 5)
+        end,
+    })
+
+    Credits_Section:AddButton({
+        Icon = "binoculars",
+        Name = "mstudio45 · Esp Library",
+        Callback = function()
+            setclipboard("https://github.com/mstudio45/MSESP")
+            Logging.new("binoculars", "Copied ESP link", 5)
+        end,
+    })
+
     if Script.IsPC then
         Window.UserSettings:AddLabel('Menu Keybind'):AddKeybind({
             Default = NeverKeybind,
@@ -218,46 +258,6 @@ function Create_Interface()
         Name = 'Unload Neverlose',
         Callback = function()
             Script:Unload()
-        end,
-    })
-
-    -- // @About
-    Window:AddTabLabel('About')
-
-    local Credits = Window:AddTab({
-        Icon = "heart",
-        Name = "Credits",
-    })
-
-    local Credits_Section = Credits:AddSection({
-        Name = "Credits",
-        Position = "left",
-    })
-
-    Credits_Section:AddButton({
-        Icon = "flame",
-        Name = "FlamesW · Function Manager",
-        Callback = function()
-            setclipboard("https://github.com/FlamesW/FunctionManager")
-            Logging.new("hammer-code", "Copied framework link", 5)
-        end,
-    })
-
-    Credits_Section:AddButton({
-        Icon = "code",
-        Name = "4lpaca · UI Library",
-        Callback = function()
-            setclipboard("https://github.com/4lpaca-pin/NeverLose")
-            Logging.new("code", "Copied UI library link", 5)
-        end,
-    })
-
-    Credits_Section:AddButton({
-        Icon = "binoculars",
-        Name = "mstudio45 · Esp Library",
-        Callback = function()
-            setclipboard("https://github.com/mstudio45/MSESP")
-            Logging.new("binoculars", "Copied ESP link", 5)
         end,
     })
 end
