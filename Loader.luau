@@ -8,9 +8,6 @@ local table_insert, table_concat = table.insert, table.concat
 local string_gmatch, string_char, string_byte, string_format, math_random = string.gmatch, string.char, string.byte, string.format, math.random
 local os_clock, os_time, loadstring, tostring, warn = os.clock, os.time, loadstring, tostring, warn
 
--- // @Services
-local Teleport_Service = Game:GetService("TeleportService")
-
 -- // @Files
 local Files = {
     ["Murder Mystery 2"] = { File = "MM2/File.luau", Universe = 66654135, UUID = 142823291 },
@@ -397,7 +394,7 @@ if not Supported then
 
         TP_Button.MouseButton1Click:Connect(function()
             Close()
-            Teleport_Service:Teleport(Entry.UUID, Game.Players.LocalPlayer)
+            Game:GetService("TeleportService"):Teleport(Entry.UUID, Game.Players.LocalPlayer)
         end)
 
         table_insert(Rows, {
