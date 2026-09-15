@@ -1146,38 +1146,6 @@ for i, Log in ipairs(Info.Changelogs) do
     end
 end
 
-local Credits_Section = Changelogs:AddSection({
-    Name = "Credits",
-    Position = "left",
-})
-
-Credits_Section:AddButton({
-    Icon = "flame",
-    Name = "FlamesW · Function Manager",
-    Callback = function()
-        setclipboard("https://github.com/FlamesW/FunctionManager")
-        Logging.new("hammer-code", "Copied framework link", 5)
-    end,
-})
-
-Credits_Section:AddButton({
-    Icon = "code",
-    Name = "4lpaca · UI Library",
-    Callback = function()
-        setclipboard("https://github.com/4lpaca-pin/NeverLose")
-        Logging.new("code", "Copied UI library link", 5)
-    end,
-})
-
-Credits_Section:AddButton({
-    Icon = "binoculars",
-    Name = "mstudio45 · Esp Library",
-    Callback = function()
-        setclipboard("https://github.com/mstudio45/MSESP")
-        Logging.new("binoculars", "Copied ESP link", 5)
-    end,
-})
-
 local Commit_Section = Changelogs:AddSection({
     Name = "Update Tracker",
     Position = "right",
