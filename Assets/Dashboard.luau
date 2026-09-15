@@ -1241,3 +1241,28 @@ Version_Section:AddButton({
     Name = "Framework · " .. tostring(Build),
     Callback = function() end,
 })
+
+-- // @Unload
+Script:OnUnload(function()
+    local TPTool = NeverLose.Flags["Movement_TPTool"]
+    if TPTool and TPTool:GetValue() then
+        TPTool:SetValue(false)
+    end
+
+    local HipHeight = NeverLose.Flags["Movement_HipHeight"]
+    if HipHeight and HipHeight:GetValue() then
+        HipHeight:SetValue(false)
+    end
+
+    local Fullbright = NeverLose.Flags["Vision_Fullbright"]
+    if Fullbright and Fullbright:GetValue() then
+        Fullbright:SetValue(false)
+    end
+
+    NeverLose:Unload()
+
+    Script:SetCameraOcclusion("Zoom")
+    Script:ThirdPerson(false)
+    Script:SetGravity(196.2)
+    Script:SetFOV(70)
+end)
