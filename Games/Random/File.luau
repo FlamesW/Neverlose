@@ -140,9 +140,10 @@ Script:Inject(
     },
     ("NeverLose/Assets/Dashboard.luau")
 )
--- // Scripts here
 
+-- // Neverlose.RandomGame.Src
 
+-- // @Settings
 function Create_Interface()
     -- // @About
     Window:AddTabLabel('About')
