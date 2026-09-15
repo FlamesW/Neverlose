@@ -5,7 +5,7 @@ if not (Game:IsLoaded()) then Game.Loaded:Wait() end
 local write_file, read_file, is_file, is_folder, make_folder = writefile, readfile, isfile, isfolder, makefolder
 
 local table_insert, table_concat = table.insert, table.concat
-local string_gmatch, string_char, string_byte = string.gmatch, string.char, string.byte
+local string_gmatch, string_char, string_byte, string_format, math_random = string.gmatch, string.char, string.byte, string.format, math.random
 local os_clock, os_time, loadstring, tostring, warn = os.clock, os.time, loadstring, tostring, warn
 
 -- // @Services
@@ -120,7 +120,7 @@ local function Play(Instance, Info, Props)
 end
 
 local function Random_Name()
-    return string.format("LA_%d_%d", math.random(1e6), math.random(1e6))
+    return string_format("LA_%d_%d", math_random(1e6), math_random(1e6))
 end
 
 local function Make_Shadow(Parent)
@@ -704,7 +704,7 @@ local Neverlose_Downloader = (function()
             Size = UDim2.fromScale(Alpha, 1),
         })
 
-        Percent.Text = string.format("%d%%", math.floor(Alpha * 100 + 0.5))
+        Percent.Text = string_format("%d%%", math.floor(Alpha * 100 + 0.5))
 
         if Label then
             Loader:SetStatus(Label)
