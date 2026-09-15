@@ -6,7 +6,7 @@ local write_file, read_file, is_file, is_folder, make_folder = writefile, readfi
 
 local table_insert, table_concat = table.insert, table.concat
 local string_gmatch, string_char, string_byte, string_format, math_random = string.gmatch, string.char, string.byte, string.format, math.random
-local os_clock, os_time, loadstring, tostring, warn = os.clock, os.time, loadstring, tostring, warn
+local task_spawn, os_clock, os_time, loadstring, tostring, warn = task.spawn, os.clock, os.time, loadstring, tostring, warn
 
 -- // @Files
 local Files = {
@@ -58,7 +58,7 @@ local function Load_Game(Url, Cache, Name)
     if is_file(Cache) then
         Source = Simple_Decode(read_file(Cache))
 
-        task.spawn(function()
+        task_spawn(function()
             local Success, Remote = pcall(function()
                 return Game:HttpGet(Url .. "?nocache=" .. tostring(os_clock() * 10000))
             end)
@@ -235,7 +235,7 @@ if not Supported then
     Header_Dot_Corner.CornerRadius = UDim.new(1, 0)
     Header_Dot_Corner.Parent = Header_Dot
 
-    local Dot_Thread = task.spawn(function()
+    local Dot_Thread = task_spawn(function()
         while Root.Parent do
             Play(Header_Dot, TweenInfo.new(0.6, Enum.EasingStyle.Quad), { BackgroundTransparency = 0.7 })
             task.wait(0.6)
@@ -672,7 +672,7 @@ local Neverlose_Downloader = (function()
     Percent.TextXAlignment = Enum.TextXAlignment.Right
     Percent.ZIndex = 1000
 
-    local Dot_Thread = task.spawn(function()
+    local Dot_Thread = task_spawn(function()
         while Root.Parent do
             Play(Title_Dot, TweenInfo.new(0.6, Enum.EasingStyle.Quad), { BackgroundTransparency = 0.7 })
             task.wait(0.6)
@@ -746,7 +746,7 @@ local Neverlose_Downloader = (function()
     end
 
     function Loader:Run(Steps)
-        task.spawn(function()
+        task_spawn(function()
             Steps = Steps or {{ Label = "Label", Time = 0.45 }}
 
             local Total = 0
