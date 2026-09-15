@@ -17,6 +17,8 @@ local Info = {
     Build = "@1.01",
 }
 
+local globalEnv = (getgenv and getgenv() or _G) :: any;
+
 Window:AddTabLabel('Main')
 
 local Dashboard = Window:AddTab({
@@ -1265,4 +1267,8 @@ Script:OnUnload(function()
     Script:ThirdPerson(false)
     Script:SetGravity(196.2)
     Script:SetFOV(70)
+
+    if globalEnv.Multi_Support then
+        globalEnv.Multi_Support = nil;
+    end
 end)
